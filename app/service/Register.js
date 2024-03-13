@@ -80,6 +80,7 @@ const handleLogin=async(body)=>{
                         id:user._id,
                         email:user.email,
                         username:user.username,
+                        group:user.group
                     },
                 }
             }

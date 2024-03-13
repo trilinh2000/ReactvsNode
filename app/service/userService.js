@@ -28,21 +28,29 @@ const getAllUser=async()=>{
     }
 }
 const getUser=async(page,limit)=>{
-    let offset=(page-1)*limit;
-    const row =await accountModel.find({},{username:1,email:1,phone:1,group:1},{new:true}).skip(offset).limit(limit);
-    const count=await accountModel.find().count();
-    // console.log(row)
-    let totalPages=Math.ceil(+count/limit);
-    let data={
-        totalRows:count,
-        totalPage:totalPages,
-        users:row
-    }
-    // console.log(data)
-    return{
-        EM:"get successfully",
-        EC:0,
-        DT:data,
+    try {
+        let offset=(page-1)*limit;
+        const row =await accountModel.find({},{username:1,email:1,phone:1,group:1},{new:true}).skip(offset).limit(limit);
+        const count=await accountModel.find().count();
+        // console.log(row)
+        let totalPages=Math.ceil(+count/limit);
+        let data={
+            totalRows:count,
+            totalPage:totalPages,
+            users:row
+        }
+        // console.log(data)
+        return{
+            EM:"get successfully",
+            EC:0,
+            DT:data,
+        }
+    } catch (error) {
+        return{
+            EM:"get error",
+            EC:1,
+            DT:'',
+        }
     }
 }
 const createUser=async(data)=>{

@@ -77,8 +77,21 @@ module.exports.create=async(req,res)=>{
     
     
 }
-module.exports.logout=async()=>{
-    res.cookie('jwt',{maxAge:0})
+module.exports.logout=async(req,res)=>{
+    try {
+        res.clearCookie('jwt');
+        return res.status(200).json({
+            EM:'Logout success',
+            EC:0,
+            DT:''
+        })
+    } catch (error) {
+        return res.status(200).json({
+            EM:'Error from data',
+            EC:1,
+            DT:''
+        })
+    }
 }
 module.exports.update=async(req,res)=>{
     const id=req.params.id;
