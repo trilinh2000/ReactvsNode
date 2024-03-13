@@ -36,12 +36,19 @@ const verifyToken=(token)=>{
     }
     
 }
+const extractToken=(req)=>{
+    if(req.headers.authorization&&req.headers.authorization.split(' ')[0]==='Bearer'){
+        return req.headers.authorization.split(' ')[1];
+    }
+    return null;
+}
 const checkUserJWT=(req,res,next)=>{
     try {
         if(nonSecurePaths.includes(req.path)) return next();
         let cookie=req.cookies;
-    if(cookie&&cookie.jwt){
-        let token=cookie.jwt;
+        let tokenFormHeader=extractToken(req);
+    if((cookie&&cookie.jwt)||tokenFormHeader){
+        let token=cookie&&cookie.jwt?cookie.jwt:tokenFormHeader;
         let decoded=verifyToken(token);
         if(decoded){
             req.user=decoded;
