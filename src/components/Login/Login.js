@@ -59,9 +59,10 @@ const Login=(props)=>{
                 let id=response.DT.id;
                 let data={
                     isAuthenticated:true,
-                    token:'fake token',
+                    token:response.DT.token,
                     account:{id,email,username},
                 }
+                localStorage.setItem('jwt',response.DT.token)
                 loginContext(data);
 
                 toast.success(response.EM);
