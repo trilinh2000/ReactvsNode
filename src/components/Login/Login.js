@@ -57,10 +57,11 @@ const Login=(props)=>{
                 let email=response.DT.email;
                 let username=response.DT.username;
                 let id=response.DT.id;
+                let group=response.DT.group
                 let data={
                     isAuthenticated:true,
                     token:response.DT.token,
-                    account:{id,email,username},
+                    account:{id,email,username,group},
                 }
                 localStorage.setItem('jwt',response.DT.token)
                 loginContext(data);

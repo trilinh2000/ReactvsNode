@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import ModelDelete from "./ModelDelete";
 import ModelUser from "./ModelUser";
 import { UserContext } from "../../useContext/userContext";
-
+import { useNavigate } from 'react-router-dom';
 const User=(props)=>{
     
-    const [listUser,setListUser]=useState();
+    const [listUser,setListUser]=useState([]);
     const [pageCount, setPageCount] = useState(0);
     const [currentPage,setCurrentPage]=useState(1);
     const [currentLimit]=useState(2);
@@ -19,11 +19,15 @@ const User=(props)=>{
     const [isShowEdit,setIsShowEdit]=useState(false);
     const [dataEdit,setDataEdit]=useState({});
     const [title,setTitle]=useState("Update");
-    useEffect(()=>{
-        fetchUser();
-    },[currentPage,title]);
+    const navigate=useNavigate();
     const {user}=React.useContext(UserContext);
-        console.log(">>>",user)
+    useEffect(()=>{
+        if(user.account&&(user.account.group==="Leader"||user.account.group==="Project Manager")){
+            fetchUser();
+        }
+        
+    },[currentPage]);
+   
     const fetchUser=async()=>{
         const response=await fetchAllUser(currentPage,currentLimit);
         if(response&&response.EC===0){
@@ -32,7 +36,8 @@ const User=(props)=>{
         }
         else{
             toast.error(response.EM);
-            navigator('/')
+            setListUser([]);
+            navigate('/');
         }
     }
     const handleDeleteUser=async(user)=>{

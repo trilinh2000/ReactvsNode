@@ -19,10 +19,13 @@ const updateUser=(data)=>{
 const getUserAccount=()=>{
     return axios.get("/account");
 }
+const logoutUser=()=>{
+    return axios.post("/logout");
+}
 
 
 //store
 const createStore=(data)=>{
     return axios.post('/store',data)
 }
-export {registerNewuser,loginUser,fetchAllUser,deleteUser,updateUser,createStore,getUserAccount}
+export {registerNewuser,loginUser,fetchAllUser,deleteUser,updateUser,createStore,getUserAccount,logoutUser}
