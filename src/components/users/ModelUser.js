@@ -61,7 +61,6 @@ const ModelUser=(props)=>{
         }
         ;//khi dataModel thay doi thi refesh lai
     },[props])
-    console.log("check model user>>",user);
     const handleChange=(e)=>{
         setUser({...user,[e.target.name]:e.target.value})
     }
@@ -70,7 +69,6 @@ const ModelUser=(props)=>{
             if(data===true){
                 if(props.title==="Update"){
                     let data=await updateUser(user);
-                    console.log("update>>>",data)
                     if(data&&data.EC===0){
                         toast.success(data.EM);
                         props.handleClose();

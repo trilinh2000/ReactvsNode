@@ -1,39 +1,102 @@
-import { useState } from 'react';
-import {createStore} from '../../service/userService'
+import { useEffect, useState } from 'react';
+import {createStore, getStore} from '../../service/userService'
+import { toast } from 'react-toastify';
+import { ColorRing } from 'react-loader-spinner'
+import './home.scss'
+import { useSelector } from 'react-redux';
+import { getPoint } from '../../service/userService';
+// ES6 module
+import Plot from 'react-plotly.js';
+
+
 const Home=()=>{
+    const [point,setPoint]=useState([])
+    const [listStore,setListStore]=useState([])
+    const [isLoading,setIsLoading]=useState((false))
     const [selectedImg,setSelectedImg]=useState(null);
-    const [title,setTitle]=useState("")
-    console.log(title);
+    const [title,setTitle]=useState("");
+    const [isShow,setIsShow]=useState(false)
+    const users=useSelector(state=>state.login.user);
+    
+    useEffect(()=>{
+        fetchStore();
+    },[listStore,point,isLoading])
+    
+    const fetchStore=async()=>{
+        let data=await getStore();
+        let point1=await getPoint()
+        setPoint(point1.DT);
+        if(data&&data.EC===0){
+            setListStore(data.DT);
+            setIsLoading(true)
+        }
+    }
     const handleClick=async(e)=>{
         e.preventDefault();
         const formData=new FormData();
         formData.append("title",title)
         formData.append("img",selectedImg)
-        console.log(formData);
         let data=await createStore(formData);
         if(+data.EC===0){
+            toast.success(data.EM);
             setSelectedImg(null);
             setTitle("")
         }
+        else{
+            toast.error(data.EM);
+        }
+    }
+    const handleShow=()=>{
+        setIsShow(true);
     }
     return(
-        <>
-            <h3>Upload and display</h3>
-            {
-                selectedImg&&(
-                    <>
-                        <img alt='not found' width={"250px"} src={URL.createObjectURL(selectedImg)}></img>
-                        <br />
-                        <button onClick={() => setSelectedImg(null)}>Remove</button>
-                    </>
-                )
-            }
-                   <form>
-                        <input type="text" className="form-control-file" value={title||""} name="title" onChange={(e)=>{setTitle(e.target.value)}}/>
-                        <input type="file" className="form-control-file" name="img" onChange={(e)=>{setTitle(e.target.files[0])}}/>
-                        <button onClick={handleClick}>Post</button>
-                   </form>
-        </>
+
+            <div className='home-container'>
+                {listStore&&isLoading===false?
+                <> 
+                    <div className='loading-container'>
+                        <ColorRing
+                        visible={true}
+                        height="100"
+                        width="100"
+                        ariaLabel="color-ring-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="color-ring-wrapper"
+                        colors={['#e15b64']}
+                        />
+                        <div>Loading...</div>
+                    </div>
+                </>:
+                <div className='container'>
+                    <div className='row px-3 d-flex flex-column'>
+                        <div id="gd">
+                            
+                        <Plot
+                            data={[
+                            {
+                                x:point[0].x,
+                                y: point[0].y,
+                                type: 'scatter',
+                                mode: 'lines+markers',
+                                marker: {color: 'red'},
+                            },
+                            // {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
+                            ]}
+                            layout={    
+                                {
+                                    width:700,
+                                    height:700,
+                                    x: {range: [0, 500], title: "Square Meters"},
+                                    y: {range: [0, 500], title: "Price in Millions"},
+                                    title: "House Prices vs. Size"
+                                } 
+                            }
+                        />
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
     )
 
 }

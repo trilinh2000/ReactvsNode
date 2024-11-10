@@ -26,6 +26,15 @@ const logoutUser=()=>{
 
 //store
 const createStore=(data)=>{
-    return axios.post('/store',data)
+    return axios.post('/store/create',data)
 }
-export {registerNewuser,loginUser,fetchAllUser,deleteUser,updateUser,createStore,getUserAccount,logoutUser}
+const getStore=()=>{
+    return axios.get('/store/read');
+}
+
+
+//point
+const getPoint=()=>{
+    return axios.get('/point');
+}
+export {registerNewuser,loginUser,fetchAllUser,deleteUser,updateUser,createStore,getUserAccount,logoutUser,getStore,getPoint}

@@ -28,7 +28,7 @@ const UserProvider=({children})=>{
         if(data&&data.EC===0){
             setTimeout(()=>{
                 setUser(data.DT)
-            },2000)
+            },10000)
             
         }
         else{

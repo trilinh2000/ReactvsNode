@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './nav.scss'  
-import { UserContext } from '../../useContext/userContext';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button';
 import logo from '../../logo.jpg';
 import { logoutUser } from '../../service/userService';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../store/rootReducer';
 function NavHeader(props) {
-    const {user,logoutContext}=React.useContext(UserContext);
+    const user=useSelector(state=>state.login)
     const location=useLocation();
     const navigate=useNavigate();
+    const dispatch=useDispatch()
     const handleLogout=async()=>{
         let data=await logoutUser();
         if(data&&+data.EC===0){
             localStorage.removeItem('jwt');
-            logoutContext();
+            dispatch(logout());
             toast.success(data.EM);
-            navigate('/login')
+            navigate('/login');
         }
         else{
             toast.error(data.EM);
         }
     }
-    if((user&&user.isAuthenticated===true)||(location.pathname==='/')){
+    if((user&&user.users&&user.users.token&&user.Loading===true)||(location.pathname==='/')){
         return (
             <>
                 <div className='nav-header'>
@@ -36,9 +40,19 @@ function NavHeader(props) {
                         <NavLink to="/" className='nav-link'>Home</NavLink>
                         <NavLink to="/user" className='nav-link'>User</NavLink>
                         <NavLink to="/About" className='nav-link'>About</NavLink>
+                        <Form className="d-flex">
+                            <Form.Control
+                            type="search"
+                            placeholder="Search"
+                            className="me-2"
+                            aria-label="Search"
+                            />
+                            <Button variant="outline-success">Search</Button>
+                        </Form>
                     </Nav>
-                    {user&&user.account&&user.account.username?
-                        <NavDropdown title={user.account.username} id="basic-nav-dropdown">
+                    
+                    {user&&user.users&&user.users.username?
+                        <NavDropdown title={user.users.username} id="basic-nav-dropdown">
                             <NavDropdown.Item href="/">
                                 Information
                             </NavDropdown.Item>
@@ -48,6 +62,7 @@ function NavHeader(props) {
                         </NavDropdown>
                         :<NavLink to="/login" className='nav-link'>Login</NavLink>
                     }
+                    
                     </Container>
                 </Navbar>
                </div>

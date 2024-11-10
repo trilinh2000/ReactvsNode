@@ -1,37 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Login.scss'
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { loginUser } from '../../service/userService';
-import { UserContext} from '../../useContext/userContext'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from '../../store/rootReducer';
 const Login=(props)=>{
-    const {loginContext}=React.useContext(UserContext)
+    const user=useSelector(state=>state.login);
     let navigate=useNavigate();
-    const [user,setUser]=useState({});
+    let dispatch=useDispatch()
+    const [userLogin,setUserLogin]=useState({});
     const defaultCheck={
         email:true,
         password:true
     }
+    useEffect(()=>{
+        if(user&&user.users&&user.users.token&&user.Loading===true){
+            navigate('/user');
+        }
+    },[user,navigate])
     const [check,setCheck]=useState(defaultCheck);
     const handleChange=(e)=>{
-        setUser({...user,[e.target.name]:e.target.value});
+        setUserLogin({...userLogin,[e.target.name]:e.target.value});
     }
     const isValid=(e)=>{
         setCheck(defaultCheck);
-        if(!user.email){
+        if(!userLogin.email){
             setCheck({...check,email:false});
             toast.error("Please enter a value email address");
             
             return false;
         }
         let regex = /\S+@\S+\.\S+/;
-        if(!regex.test(user.email)){
+        if(!regex.test(userLogin.email)){
             
             setCheck({...check,email:false});
             toast.error("Please enter a value email address");
             return false;
         }
-        if(user.password.length<4){
+        if(userLogin.password.length<4){
             setCheck({...check,password:false});
             toast.error("your password is value more than three");
             return false;
@@ -48,29 +54,13 @@ const Login=(props)=>{
         };
     }
     const handleLogin=async(e)=>{
-        // e.preventDefault();
-        // console.log(user);
         let isCheck=isValid();
         if(isCheck===true){
-            let response=await loginUser(user);
-            if(+response.EC===0){
-                let email=response.DT.email;
-                let username=response.DT.username;
-                let id=response.DT.id;
-                let group=response.DT.group
-                let data={
-                    isAuthenticated:true,
-                    token:response.DT.token,
-                    account:{id,email,username,group},
-                }
-                localStorage.setItem('jwt',response.DT.token)
-                loginContext(data);
-
-                toast.success(response.EM);
+            
+            let response= await dispatch(fetchUser(userLogin));
+            if(response&&response.payload&&response.payload.token){
+                localStorage.setItem('jwt',response.payload.token);
                 navigate("/user");
-            }
-            else{
-                toast.error(response.EM);
             }
             
         }

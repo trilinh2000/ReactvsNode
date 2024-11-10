@@ -6,23 +6,22 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
 import ModelDelete from "./ModelDelete";
 import ModelUser from "./ModelUser";
-import { UserContext } from "../../useContext/userContext";
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
 const User=(props)=>{
-    
     const [listUser,setListUser]=useState([]);
     const [pageCount, setPageCount] = useState(0);
     const [currentPage,setCurrentPage]=useState(1);
-    const [currentLimit]=useState(2);
+    const [currentLimit]=useState(5);
     const [isShowDelete,setIsShowDelete]=useState(false);
     const [dataModel,setDataModel]=useState({});
     const [isShowEdit,setIsShowEdit]=useState(false);
     const [dataEdit,setDataEdit]=useState({});
     const [title,setTitle]=useState("Update");
     const navigate=useNavigate();
-    const {user}=React.useContext(UserContext);
+    const user=useSelector(state=>state.login.users)
     useEffect(()=>{
-        if(user.account&&(user.account.group==="Leader"||user.account.group==="Project Manager")){
+        if(user&&(user.group==="Leader"||user.group==="Project Manager")){
             fetchUser();
         }
         
@@ -30,6 +29,7 @@ const User=(props)=>{
    
     const fetchUser=async()=>{
         const response=await fetchAllUser(currentPage,currentLimit);
+        console.log('check list',response.DT);
         if(response&&response.EC===0){
             setPageCount(response.DT.totalPage);
             setListUser(response.DT.users)
@@ -69,7 +69,6 @@ const User=(props)=>{
         setTitle("Update");
             setDataEdit(user);
             setIsShowEdit(true);
-            // console.log(title);
     }
     const handleCreateUser=async()=>{
         setTitle("create");

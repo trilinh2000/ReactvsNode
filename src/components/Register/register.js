@@ -15,6 +15,7 @@ const Register=(props)=>{
     const [objCheck,setObjCheck]=useState(defaultCheck)
     const handleChange=(e)=>{
         setUser({...user,[e.target.name]:e.target.value})
+        // console.log(user);
     }
     let navigate=useNavigate();
     const isValid=(e)=>{
@@ -60,6 +61,7 @@ const Register=(props)=>{
         e.preventDefault();
         let check=isValid();
         if(check===true){
+            // console.log(user);
             let response=await registerNewuser(user)
             if(+response.EC===0){
                 toast.success(response.EM);
