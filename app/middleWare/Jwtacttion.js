@@ -1,6 +1,6 @@
 let jwt = require('jsonwebtoken');
 require('dotenv/config');
-const nonSecurePaths=['/','/login','/register','/logout']
+const nonSecurePaths=['/','/login','/register','/logout','/point','/store/read','/account']
 
 const createJWT=(payload)=>{
     let token=null;
@@ -79,7 +79,7 @@ const checkUserJWT=(req,res,next)=>{
     }
 }
 const checkUserPermission=(req,res,next)=>{
-    if(nonSecurePaths.includes(req.path)||req.path==='/account') return next();
+    if(nonSecurePaths.includes(req.path)||req.path==='/account'||req.path==='/store/read') return next();
     if(req.user){
         let group=req.user.group;
         if(group=="Leader"||group=='Project Manager'){

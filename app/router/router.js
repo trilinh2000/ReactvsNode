@@ -3,6 +3,7 @@ const userController=require('../Controller/userController');
 const {checkUserJWT,checkUserPermission}=require('../middleWare/Jwtacttion');
 const upload = require('../model/multer');
 const storeController=require('../Controller/storeController')
+const point=require('../Controller/point')
 // const checkUserLogin=(req,res,next)=>{
 //         const nonSecurePaths = ['/', '/register', '/login'];
 //         if (nonSecurePaths.includes(req.path)) return next();
@@ -31,6 +32,11 @@ module.exports=app=>{
     .delete('/user/delete',userController.deleteFunc)
 
     //store
-    .post('/store',checkUserJWT,upload.single('img'),storeController.create)
+    .get('/store/read',storeController.readStore)
+    .post('/store/create',upload.single('img'),storeController.create)
+    
+    //point
+    .get("/point",point.point)
+    .post('/point/add',point.add)
     app.use(router);
 }

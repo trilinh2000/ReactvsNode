@@ -1,20 +1,25 @@
 const userService=require('../service/userService');
 const getUserAccount=async(req,res)=>{
-    // console.log("check user:",req.user);
+    if(req.user){
         return res.status(200).json({
             EM:"oki",
             EC:0,
             DT:{
-                    isLoading:false,
-                    isAuthenticated:true,
+                    
+                    id:req.user.id,
+                    email:req.user.email,
+                    username:req.user.username,
+                    group:req.user.group,
                     token:req.token,
-                    account:{
-                        id:req.user.id,
-                        email:req.user.email,
-                        username:req.user.username
-                    }
             }
         })
+    }
+    return res.status(200).json({
+        EM:'not found',
+        EC:1,
+        DT:''
+    })
+     
     
 }
 const readFunc=async(req,res)=>{

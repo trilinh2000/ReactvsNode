@@ -3,6 +3,7 @@ const bcrypt=require('bcrypt');
 let register=require("../service/Register")
 require('dotenv/config')
 
+
 module.exports.login=async(req,res)=>{
                 try {
                     setTimeout(async()=>{
@@ -23,6 +24,7 @@ module.exports.login=async(req,res)=>{
                             }
                             let data=await register.handleLogin(req.body);
                             res.cookie("jwt",data.DT.token,{httpOnly:true,maxAge:process.env.maxAge})
+                            // port.write('login\n');
                             return res.status(200).json({
                                 EM:data.EM,
                                 EC:data.EC,
@@ -61,6 +63,7 @@ module.exports.create=async(req,res)=>{
                 DT:''
             })
         }
+        console.log(req.body);
         let data=await register.register(req.body,{new:true});  
         return res.status(200).json({
             EM:data.EM,

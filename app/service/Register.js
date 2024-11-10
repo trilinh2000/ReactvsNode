@@ -59,8 +59,7 @@ const register=async(data)=>{
 };
 const handleLogin=async(body)=>{
    try {
-        let user=await accountModel.findOne({email:body.email})
-        // console.log(">>>>",user)
+        let user=await accountModel.findOne({email:body.email});
         if(user){
             let isCorrect=await checkPassword(body.password,user.password);
             if(isCorrect===true){
@@ -76,7 +75,8 @@ const handleLogin=async(body)=>{
                 return {
                     EM:`A ${user.username} is login successfully! `,
                     EC:0,
-                    DT:{token:token,
+                    DT:{
+                        token:token,
                         id:user._id,
                         email:user.email,
                         username:user.username,
